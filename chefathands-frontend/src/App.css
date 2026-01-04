@@ -20,32 +20,56 @@
 }
 
 .card {
-  background: #ffffff;
+  background: rgba(255,255,255,0.92);
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.08);
-  padding: 16px;
-  margin-bottom: 16px;
+  box-shadow: 0 8px 28px rgba(2,6,23,0.12);
+  padding: 18px;
+  margin-bottom: 18px;
   color: #0f1724;
+  border: 1px solid rgba(10,24,40,0.04);
 }
 
-.row { display:flex; gap:12px; align-items:center; }
+/* Auth pages (Login / Signup) - centered larger panels */
+.auth-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 20;
+}
+.auth-card {
+  width: 820px;
+  max-width: 95%;
+  padding: 48px 48px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 16px 48px rgba(2,6,23,0.28);
+  border: 1px solid rgba(10,24,40,0.06);
+}
 
+/* Larger form controls */
 input[type="text"], input[type="password"], input[placeholder] {
-  padding: 10px 12px;
-  border: 1px solid #e6eef8;
-  border-radius: 8px;
-  width: 240px;
+  padding: 14px 16px;
+  border: 1px solid rgba(14,63,110,0.08);
+  border-radius: 10px;
+  width: 100%;
+  font-size: 16px;
 }
 
 button.btn {
-  background: #2563eb;
+  background: linear-gradient(90deg,#2563eb,#1e40af);
   color: #fff;
   border: none;
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 14px 18px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 16px;
 }
-button.btn.secondary { background: #e6eef8; color:#0f1724 }
+button.btn.secondary { background: rgba(230,238,248,0.9); color:#0f1724 }
+
+.row { display:flex; gap:12px; align-items:center; }
 
 .ingredients-list li { margin:8px 0; display:flex; align-items:center; gap:8px }
 .recipes-list li { margin:10px 0; }

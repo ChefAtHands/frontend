@@ -21,7 +21,7 @@ export default function SignupPage() {
             await signup(username, email, password);
 
             alert("Account created!");
-            navigate("/");
+            navigate("/login");
         } catch (err) {
             const status = err?.response?.status;
             if (status === 409) {
@@ -36,8 +36,8 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="container">
-            <div className="card" style={{maxWidth:480, margin:'24px auto'}}>
+        <div className="auth-container">
+            <div className="card auth-card">
                 <h1 className="center">Sign Up</h1>
 
                 <div style={{marginBottom:10}}>
@@ -80,7 +80,7 @@ export default function SignupPage() {
                 </div>
 
                 <div className="row" style={{justifyContent:'center'}}>
-                    <button className="btn" onClick={handleSignup} disabled={password.length < 6}>Create Account</button>
+                    <button className="btn btn-primary" onClick={handleSignup} disabled={password.length < 6}>Create Account</button>
                 </div>
             </div>
         </div>

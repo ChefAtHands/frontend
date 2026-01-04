@@ -8,6 +8,7 @@ export default function DashboardPage() {
     const navigate = useNavigate();
     const userId = localStorage.getItem("userId");
     const username = localStorage.getItem("username");
+    const RECIPE_CACHE_KEY = `recipes_cache_user_${userId}`;
 
     const [ingredients, setIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
@@ -15,7 +16,7 @@ export default function DashboardPage() {
 
     //if not logged in
     useEffect(() => {
-        if (!userId) navigate("/");   
+        if (!userId) navigate("/login");   
     }, [userId, navigate]);
 
     // load ingredients
@@ -23,10 +24,18 @@ export default function DashboardPage() {
         loadIngredients();
     }, []);
 
-    //whenever ingredients change
     useEffect(() => {
-        loadRecipes();
-    }, [ingredients]);
+        const cached = localStorage.getItem(RECIPE_CACHE_KEY);
+        if (cached) {
+            try {
+                setRecipes(JSON.parse(cached));
+            } catch {
+                localStorage.removeItem(RECIPE_CACHE_KEY);
+            }
+        }
+    }, [RECIPE_CACHE_KEY]);
+
+    // Do not auto-search when ingredients change — recipes load only on user action
 
     const loadIngredients = async () => {
         try {
@@ -42,6 +51,7 @@ export default function DashboardPage() {
             }));
 
             setIngredients(enriched);
+
         } catch (err) {
             console.error('Failed to load ingredients', err);
             setIngredients([]);
@@ -51,7 +61,7 @@ export default function DashboardPage() {
     const loadRecipes = async () => {
         try {
             const res = await getRecommendations(userId);
-            console.debug('getRecommendations response:', res?.data);
+            //console.debug('getRecommendations response:', res?.data);
             const list = (res.data && (res.data.recipes || res.data.recpies || res.data)) || [];
 
             // If recipes have only ids or incomplete fields, fetch details
@@ -71,6 +81,12 @@ export default function DashboardPage() {
             }));
 
             setRecipes(enriched || []);
+
+            localStorage.setItem(
+                RECIPE_CACHE_KEY,
+                JSON.stringify(enriched || [])
+            );
+
         } catch (err) {
             console.error('Failed to load recipes', err);
             setRecipes([]);
@@ -96,6 +112,8 @@ export default function DashboardPage() {
                 ingredientId,
                 quantity: "1"
             });
+            localStorage.removeItem(RECIPE_CACHE_KEY);
+            setRecipes([]);
 
             setInput("");
             loadIngredients();
@@ -107,12 +125,14 @@ export default function DashboardPage() {
 
     const removeIngredient = async (id) => {
         await deleteUserIngredient(userId, id);
+        localStorage.removeItem(RECIPE_CACHE_KEY);
+        setRecipes([]);
         loadIngredients();
     };
 
     const logout = () => {
         localStorage.clear();
-        navigate("/");
+        navigate("/login");
     };
 
     return (
@@ -128,7 +148,7 @@ export default function DashboardPage() {
 
             <div className="card">
                 <h3>Your Ingredients</h3>
-                <div className="row" style={{marginBottom:12}}>
+                <div className="row" style={{marginBottom:12, gap: 10}}>
                     <input
                         placeholder="Add ingredient..."
                         value={input}
@@ -165,7 +185,10 @@ export default function DashboardPage() {
                 )}
 
                 <div style={{marginTop:10, textAlign:'right'}}>
-                    <button className="btn secondary" onClick={loadRecipes}>Refresh</button>
+                    <div style={{display:'flex', gap:8, justifyContent:'flex-end'}}>
+                        <button className="btn btn-primary" onClick={loadRecipes}>Search</button>
+                        <button className="btn btn-outline" onClick={loadRecipes}>Refresh</button>
+                    </div>
                 </div>
             </div>
         </div>

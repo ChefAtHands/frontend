@@ -6,6 +6,15 @@ const RECIPE_BASE = "http://localhost:8085/api/recipes";
 export const getRecommendations = (userId) =>
     axios.get(`${BASE}?userId=${userId}`);
 
+/**
+ * Search recommendations using a custom list of ingredient names.
+ * `names` should be an array of strings, e.g. ["chicken","garlic"]
+ */
+export const searchRecipesWithIngredients = (userId, names, number = 10, offset = 0) => {
+    const payload = { ingredients: (names || []).map(n => ({ name: n })) };
+    return axios.post(`${BASE}?userId=${userId}&number=${number}&offset=${offset}`, payload);
+};
+
 // Simple local cache to avoid repeated calls to the recipe-search service
 const RECIPE_CACHE_KEY = "chef_recipe_cache_v1";
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours

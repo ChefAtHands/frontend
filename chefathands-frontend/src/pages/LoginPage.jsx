@@ -28,8 +28,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="container">
-            <div className="card" style={{maxWidth:420, margin:'24px auto'}}>
+        <div className="auth-container">
+            <div className="card auth-card">
                 <h1 className="center">Login</h1>
 
                 <div style={{marginBottom:10}}>
@@ -50,7 +50,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="row" style={{justifyContent:'center'}}>
-                    <button className="btn" onClick={handleLogin}>Login</button>
+                    <button className="btn btn-primary" onClick={handleLogin}>Login</button>
                 </div>
 
                 <p className="center" style={{marginTop:12}}>
