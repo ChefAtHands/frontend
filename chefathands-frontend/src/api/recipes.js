@@ -3,8 +3,23 @@ import axios from "axios";
 const BASE = "http://localhost:8080/api/recommendations";
 const RECIPE_BASE = "http://localhost:8085/api/recipes";
 
-export const getRecommendations = (userId) =>
-    axios.get(`${BASE}?userId=${userId}`);
+export const getRecommendations = (userId, filters = {}) => {
+    // Remove empty strings so backend only receives real filters
+    const cleaned = Object.fromEntries(
+        Object.entries(filters).map(([k, v]) => [
+            k,
+            v === "" ? undefined : v
+        ])
+    );
+
+    const params = {userId, ...cleaned};
+
+    console.log("Sending request with params:", params);
+
+    return axios.get(BASE, {
+        params
+    });
+};
 
 /**
  * Search recommendations using a custom list of ingredient names.

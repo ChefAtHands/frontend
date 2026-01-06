@@ -13,6 +13,18 @@ export default function DashboardPage() {
     const [ingredients, setIngredients] = useState([]);
     const [recipes, setRecipes] = useState([]);
     const [input, setInput] = useState("");
+    const [filters, setFilters] = useState({
+        minProtein: "",
+        maxProtein: "",
+        minCarbs: "",
+        maxCarbs: "",
+        minCalories: "",
+        maxCalories: "",
+        minFat: "",
+        maxFat: "",
+        type: "",
+        diet: ""
+    });
 
     //if not logged in
     useEffect(() => {
@@ -34,6 +46,10 @@ export default function DashboardPage() {
             }
         }
     }, [RECIPE_CACHE_KEY]);
+
+    useEffect(() => {
+        localStorage.removeItem(RECIPE_CACHE_KEY);
+    }, []);
 
     // Do not auto-search when ingredients change — recipes load only on user action
 
@@ -60,31 +76,19 @@ export default function DashboardPage() {
 
     const loadRecipes = async () => {
         try {
-            const res = await getRecommendations(userId);
+            const res = await getRecommendations(userId, filters);
             //console.debug('getRecommendations response:', res?.data);
-            const list = (res.data && (res.data.recipes || res.data.recpies || res.data)) || [];
+            const list = res.data?.recipes || [];
 
             // If recipes have only ids or incomplete fields, fetch details
             // Limit how many recipe detail lookups we do per load to avoid many calls
-            const MAX_DETAIL_FETCH = 6;
-            let detailFetches = 0;
-            const enriched = await Promise.all(list.map(async (r) => {
-                if (r.title && r.title.trim()) return r;
-                if (detailFetches >= MAX_DETAIL_FETCH) return r;
-                try {
-                    const detail = await getRecipeById(r.id);
-                    detailFetches += 1;
-                    return { ...r, title: detail.data?.title || detail.data?.name || '' , image: detail.data?.image || '' };
-                } catch (e) {
-                    return r;
-                }
-            }));
+            setRecipes(list);
 
-            setRecipes(enriched || []);
+            //setRecipes(enriched);
 
             localStorage.setItem(
                 RECIPE_CACHE_KEY,
-                JSON.stringify(enriched || [])
+                JSON.stringify(list)
             );
 
         } catch (err) {
@@ -124,10 +128,14 @@ export default function DashboardPage() {
     };
 
     const removeIngredient = async (id) => {
+        try {
         await deleteUserIngredient(userId, id);
         localStorage.removeItem(RECIPE_CACHE_KEY);
         setRecipes([]);
-        loadIngredients();
+        await loadIngredients();
+        } catch(err) {
+            console.error("Failed to delete ingredient", err);
+        }
     };
 
     const logout = () => {
@@ -165,6 +173,145 @@ export default function DashboardPage() {
                         </li>
                     ))}
                 </ul>
+            </div>
+            
+            {/* ===== Filters Card ===== */}
+            <div className="card">
+            <h3 style={{ marginBottom: "16px" }}>Filters</h3>
+
+            <div 
+                className="row" 
+                style={{ 
+                flexWrap: "wrap", 
+                gap: "14px",
+                marginBottom: "12px"
+                }}
+            >
+                {/* Protein */}
+                <input 
+                type="number" 
+                placeholder="Min Protein" 
+                value={filters.minProtein}
+                onChange={(e) => setFilters({ ...filters, minProtein: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+                <input 
+                type="number" 
+                placeholder="Max Protein" 
+                value={filters.maxProtein}
+                onChange={(e) => setFilters({ ...filters, maxProtein: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+
+                {/* Carbs */}
+                <input 
+                type="number" 
+                placeholder="Min Carbs" 
+                value={filters.minCarbs}
+                onChange={(e) => setFilters({ ...filters, minCarbs: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+                <input 
+                type="number" 
+                placeholder="Max Carbs" 
+                value={filters.maxCarbs}
+                onChange={(e) => setFilters({ ...filters, maxCarbs: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+
+                {/* Calories */}
+                <input 
+                type="number" 
+                placeholder="Min Calories" 
+                value={filters.minCalories}
+                onChange={(e) => setFilters({ ...filters, minCalories: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+                <input 
+                type="number" 
+                placeholder="Max Calories" 
+                value={filters.maxCalories}
+                onChange={(e) => setFilters({ ...filters, maxCalories: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+
+                {/* Fat */}
+                <input 
+                type="number" 
+                placeholder="Min Fat" 
+                value={filters.minFat}
+                onChange={(e) => setFilters({ ...filters, minFat: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+                <input 
+                type="number" 
+                placeholder="Max Fat" 
+                value={filters.maxFat}
+                onChange={(e) => setFilters({ ...filters, maxFat: e.target.value })}
+                style={{ maxWidth: "160px" }}
+                />
+
+                {/* Type */}
+                <select
+                value={filters.type}
+                onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+                style={{ maxWidth: "200px" }}
+                >
+                <option value="">Any Type</option>
+                <option value="main course">Main Course</option>
+                <option value="side dish">Side Dish</option>
+                <option value="dessert">Dessert</option>
+                <option value="appetizer">Appetizer</option>
+                <option value="salad">Salad</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="soup">Soup</option>
+                </select>
+
+                {/* Diet */}
+                <select
+                value={filters.diet}
+                onChange={(e) => setFilters({ ...filters, diet: e.target.value })}
+                style={{ maxWidth: "200px" }}
+                >
+                <option value="">Any Diet</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="gluten free">Gluten Free</option>
+                <option value="dairy free">Dairy Free</option>
+                <option value="ketogenic">Ketogenic</option>
+                <option value="paleo">Paleo</option>
+                </select>
+            </div>
+
+            {/* Buttons */}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                <button 
+                className="btn secondary"
+                onClick={() => {
+                    setFilters({
+                    minProtein: "",
+                    maxProtein: "",
+                    minCarbs: "",
+                    maxCarbs: "",
+                    minCalories: "",
+                    maxCalories: "",
+                    minFat: "",
+                    maxFat: "",
+                    type: "",
+                    diet: ""
+                    });
+                }}
+                >
+                Clear
+                </button>
+
+                <button 
+                className="btn"
+                onClick={loadRecipes}
+                >
+                Apply Filters
+                </button>
+            </div>
             </div>
 
             <div className="card">

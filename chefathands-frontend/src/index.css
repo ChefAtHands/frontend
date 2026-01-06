@@ -286,3 +286,54 @@ select:disabled {
   color: #0f1724;     /* dark modern color */
   letter-spacing: 1px;
 }
+
+
+/* ===== Filters Panel ===== */
+.filters-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Grid layout for filter inputs */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+/* Label styling (optional if you add labels later) */
+.filter-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+/* Buttons row inside filter card */
+.filters-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* Make selects look consistent with inputs */
+.filters-grid select {
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+/* Slightly smaller inputs for filters */
+.filters-grid input,
+.filters-grid select {
+  padding: 10px 14px;
+  font-size: 0.95rem;
+}
+
+/* Optional: subtle hover highlight for filter card */
+.card.filters-card:hover {
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
+  transition: all 0.25s ease;
+}
