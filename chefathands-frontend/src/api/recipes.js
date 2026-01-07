@@ -1,10 +1,8 @@
 import axios from "axios";
 
-const BASE = "http://localhost:8080/api/recommendations";
-const RECIPE_BASE = "http://localhost:8085/api/recipes";
+const BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 export const getRecommendations = (userId, filters = {}) => {
-    // Remove empty strings so backend only receives real filters
     const cleaned = Object.fromEntries(
         Object.entries(filters).map(([k, v]) => [
             k,
@@ -13,21 +11,14 @@ export const getRecommendations = (userId, filters = {}) => {
     );
 
     const params = {userId, ...cleaned};
-
     console.log("Sending request with params:", params);
 
-    return axios.get(BASE, {
-        params
-    });
+    return axios.get(`${BASE}/api/recommendations`, { params });
 };
 
-/**
- * Search recommendations using a custom list of ingredient names.
- * `names` should be an array of strings, e.g. ["chicken","garlic"]
- */
 export const searchRecipesWithIngredients = (userId, names, number = 10, offset = 0) => {
     const payload = { ingredients: (names || []).map(n => ({ name: n })) };
-    return axios.post(`${BASE}?userId=${userId}&number=${number}&offset=${offset}`, payload);
+    return axios.post(`${BASE}/api/recommendations?userId=${userId}&number=${number}&offset=${offset}`, payload);
 };
 
 // Simple local cache to avoid repeated calls to the recipe-search service
@@ -64,7 +55,7 @@ export const getRecipeById = async (id) => {
         return Promise.resolve({ data: entry.data });
     }
 
-    const res = await axios.get(`${RECIPE_BASE}/${id}`);
+    const res = await axios.get(`${BASE}/api/recipes/${id}`);
     try {
         cache[id] = { data: res.data, cachedAt: Date.now() };
         saveCache(cache);

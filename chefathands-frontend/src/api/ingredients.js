@@ -1,22 +1,23 @@
 import axios from "axios";
 
-const BASE = "http://localhost:8080/api/users";
-const ING_BASE = "http://localhost:8080/api/ingredients";
+// Dodajte na vrh:
+const BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
+// Spremenite vse URL-je:
 export const getUserIngredients = (userId) =>
-    axios.get(`${BASE}/${userId}/ingredients`);
+    axios.get(`${BASE}/api/users/${userId}/ingredients`);
 
 export const addUserIngredient = (userId, ingredient) =>
-    axios.post(`${BASE}/${userId}/ingredients`, ingredient);
+    axios.post(`${BASE}/api/users/${userId}/ingredients`, ingredient);
 
 export const deleteUserIngredient = (userId, userIngredientId) =>
-    axios.delete(`${BASE}/${userId}/ingredients/${userIngredientId}`);
+    axios.delete(`${BASE}/api/users/${userId}/ingredients/${userIngredientId}`);
 
 export const searchIngredients = (name) =>
-    axios.get(`${ING_BASE}/search?name=${encodeURIComponent(name)}`);
+    axios.get(`${BASE}/api/ingredients/search?name=${encodeURIComponent(name)}`);
 
 export const createIngredient = (ingredient) =>
-    axios.post(ING_BASE, ingredient);
+    axios.post(`${BASE}/api/ingredients`, ingredient);
 
 export const getIngredientById = (id) =>
-    axios.get(`${ING_BASE}/${id}`);
+    axios.get(`${BASE}/api/ingredients/${id}`);
