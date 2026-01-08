@@ -1,9 +1,8 @@
 import axios from "axios";
 
-// Dodajte na vrh:
-const BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+// Spremenite na relativno pot
+const BASE = window.location.origin;
 
-// Spremenite vse URL-je:
 export const getUserIngredients = (userId) =>
     axios.get(`${BASE}/api/users/${userId}/ingredients`);
 

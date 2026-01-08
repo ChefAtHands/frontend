@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+// Spremenite na relativno pot
+const BASE = window.location.origin;
 
 export const getRecommendations = (userId, filters = {}) => {
     const cleaned = Object.fromEntries(

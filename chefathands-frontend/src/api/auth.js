@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// Spremenite to vrstico:
-const BASE = process.env.REACT_APP_API_URL || "http://localhost:8080";
+// Spremenite na relativno pot (brez localhost)
+const BASE = window.location.origin;
 
 export const login = (username, password) =>
     axios.post(`${BASE}/api/login`, { username, password });
