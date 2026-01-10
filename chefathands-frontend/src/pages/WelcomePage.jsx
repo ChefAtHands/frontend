@@ -8,7 +8,7 @@ export default function WelcomePage() {
 
   useEffect(() => {
     // set welcome background while this page is mounted
-    const prev = document.body.style.backgroundImage;
+    
     document.body.style.backgroundImage = `url(${welcomeBg})`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
@@ -43,11 +43,4 @@ const containerStyle = {
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat'
-};
-
-const panelStyle = {
-  background: 'rgba(255,255,255,0.85)',
-  padding: 24,
-  borderRadius: 8,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.12)'
 };

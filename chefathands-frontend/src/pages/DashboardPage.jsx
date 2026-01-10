@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserIngredients, addUserIngredient, deleteUserIngredient, searchIngredients, createIngredient, getIngredientById } from "../api/ingredients";
-import { getRecommendations, getRecipeById } from "../api/recipes";
+import { getRecommendations } from "../api/recipes";
 import { Link } from "react-router-dom";
 
 export default function DashboardPage() {
@@ -34,6 +34,7 @@ export default function DashboardPage() {
     // load ingredients
     useEffect(() => {
         loadIngredients();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -45,10 +46,12 @@ export default function DashboardPage() {
                 localStorage.removeItem(RECIPE_CACHE_KEY);
             }
         }
-    }, [RECIPE_CACHE_KEY]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         localStorage.removeItem(RECIPE_CACHE_KEY);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Do not auto-search when ingredients change — recipes load only on user action
